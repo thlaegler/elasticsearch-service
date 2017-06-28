@@ -1,0 +1,9 @@
+=======================
+ Elasticsearch Service
+=======================
+
+Application:	${spring.application.name}
+Version:	${it.version}
+Description:	${it.description}
+Spring:		${spring-boot.version}
+ 

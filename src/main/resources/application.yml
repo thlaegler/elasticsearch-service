@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: elasticsearch-service
+  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:microservice;MODE=MySQL;IGNORECASE=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    username: sa
+#    password: sa
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://microservice-mysql:3306/microservice?zeroDateTimeBehavior=convertToNull&autoreconnect=true&characterEncoding=UTF-8&characterSetResults=UTF-8&useSSL=false
+#    url: jdbc:mysql://localhost:3306/elasticsearch-service?zeroDateTimeBehavior=convertToNull&autoreconnect=true&characterEncoding=UTF-8&characterSetResults=UTF-8&useSSL=false
+    username: microservice
+    password: microservice
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+      show-sql: true
+      naming:
+        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        show_sql: true
+        format_sql: true
+      javax:
+        persistence:
+          schema-generation:
+            create-source: metadata
+            drop-source: metadata
+            scripts:
+              action: drop-and-create
+              create-target: src/main/resources/create-schema.sql
+              drop-target: src/main/resources/drop-schema.sql
+  data:
+    elasticsearch:
+      cluster-name: microservice-cluster
+      cluster-nodes: microservice-es:9300
+      host: microservice-es
+      port: 9300
+      properties:
+        data:
+          path: target/es-data
+it:
+  version: 1.0.0-SNAPSHOT
+  description: A Elasticsearch example project
+  elasticsearch:
+    product:
+      indexName: searchindex
+      indexType: Product
+server:
+  port: 8080
+management:
+  security:
+    enabled: false
+endpoints:
+  shutdown:
+    enabled: false
+  actuator:
+    enabled: false
+  health:
+    enabled: false
+  env:
+    enabled: false
+  info:
+    enabled: false
+  beans:
+    enabled: false
+  metrics:
+    enabled: false
+  

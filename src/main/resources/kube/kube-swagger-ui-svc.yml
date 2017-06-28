@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: swagger-ui
+  namespace: microservice
+  labels:
+    project: swagger-ui
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
+spec:
+  selector:
+    project: swagger-ui
+  ports:
+  - name: mysql
+    port: 3306

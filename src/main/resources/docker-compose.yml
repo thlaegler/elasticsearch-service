@@ -1,0 +1,60 @@
+version: '3'
+services:
+  elasticsearch-service:
+    image: elasticsearch-service:1.0.0-SNAPSHOT
+    container_name: elasticsearch-service
+    hostname: elasticsearch-service
+    command: java -Dspring.active.profiles=test -Dit.test.host=http://elasticsearch-service:8080 -jar app.jar
+    ports:
+    - 8080:8080
+    environment:
+    - TEST_HOST="http://elasticsearch-service:8080"
+    links:
+    - microservice-es
+    - microservice-mysql
+    networks:
+    - microservice
+  microservice-mysql:
+    image: microservice-mysql:1.0.0-SNAPSHOT
+    container_name: microservice-mysql
+    hostname: microservice-mysql
+    ports:
+    - 3306:3306
+    networks:
+    - microservice
+  microservice-es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.3
+    container_name: microservice-es
+    hostname: microservice-es
+    ports:
+    - 9200:9200
+    - 9300:9300
+    environment:
+    - cluster.name=microservice-cluster
+    - bootstrap.memory_lock=true
+    - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+    - esdata:/usr/share/elasticsearch/data
+    networks:
+    - microservice
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v3.0.17
+    container_name: swagger-ui
+    hostname: swagger-ui
+    ports:
+    - 8080:8080
+    networks:
+    - microservice
+  swagger-editor:
+    image: swaggerapi/swagger-editor:v3.0.13
+    container_name: swagger-editor
+    hostname: swagger-editor
+    ports:
+    - 8080:8080
+    networks:
+    - microservice
+volumes:
+  esdata:
+    driver: local
+networks:
+  microservice: null

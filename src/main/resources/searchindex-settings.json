@@ -1,0 +1,71 @@
+{
+	"number_of_shards": "2",
+	"number_of_replicas": "0",
+	"analysis": {
+		"filter": {
+			"shingle_filter": {
+				"min_shingle_size": "2",
+				"max_shingle_size": "5",
+				"output_unigrams": "false",
+				"type": "shingle"
+			},
+			"custom_ngram_filter": {
+				"type": "ngram",
+				"min_gram": 4,
+				"max_gram": 50
+			}
+		},
+		"tokenizer": {
+			"edge_ngram_tokenizer": {
+				"type": "edgeNGram",
+				"min_gram": "2",
+				"max_gram": "50",
+				"token_chars": [
+					"letter",
+					"digit"
+				]
+			},
+			"prefix_tokenizer": {
+				"type": "path_hierarchy",
+				"delimiter": "&"
+			}
+		},
+		"analyzer": {
+			"prefix_analyzer": {
+				"type": "custom",
+				"tokenizer": "prefix_tokenizer"
+			},
+			"shingle_analyzer": {
+				"filter": [
+					"lowercase",
+					"shingle_filter"
+				],
+				"type": "custom",
+				"tokenizer": "whitespace"
+			},
+			"string_analyzer": {
+				"type": "custom",
+				"tokenizer": "whitespace",
+				"filter": [
+					"lowercase"
+				]
+			},
+			"custom_ngram_analyzer": {
+				"type": "custom",
+				"tokenizer": "standard",
+				"filter": [
+					"standard",
+					"lowercase",
+					"custom_ngram_filter"
+				]
+			},
+			"phrase_analyzer": {
+				"type": "custom",
+				"tokenizer": "whitespace",
+				"filter": [
+					"lowercase"
+				]
+			}
+		}
+	}
+}

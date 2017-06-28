@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: microservice
+  labels:
+    name: microservice
+    project: elasticsearch-service
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
