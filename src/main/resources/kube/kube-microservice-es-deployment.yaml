@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microservice-es
+  namespace: microservice
+  labels:
+    project: microservice-es
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: microservice-es
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.3
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: api
+          containerPort: 8080
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

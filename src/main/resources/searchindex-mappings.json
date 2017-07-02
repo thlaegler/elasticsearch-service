@@ -1,0 +1,26 @@
+{
+	"mappings": {
+		"Product": {
+			"properties": {
+				"name": {
+					"type": "text"
+				},
+				"description": {
+					"type": "text"
+				},
+				"manufacturer": {
+					"type": "text"
+				},
+				"itemCode": {
+					"type": "text"
+				},
+				"price": {
+					"type": "nested"
+				},
+				"categories": {
+					"type": "nested"
+				}
+			}
+		}
+	}
+}

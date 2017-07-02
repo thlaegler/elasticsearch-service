@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+  namespace: microservice
+  labels:
+    project: elasticsearch-service
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
+spec:
+  selector:
+    project: elasticsearch-service
+  ports:
+  - name: api
+    port: 8080

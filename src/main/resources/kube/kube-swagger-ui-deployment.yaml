@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: swagger-ui
+  namespace: microservice
+  labels:
+    project: swagger-ui
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: swagger-ui
+        image: swaggerapi/swagger-ui
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: api
+          containerPort: 8080
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice-mysql
+  namespace: microservice
+  labels:
+    project: microservice-mysql
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
+spec:
+  selector:
+    project: microservice-mysql
+  ports:
+  - name: mysql
+    port: 3306

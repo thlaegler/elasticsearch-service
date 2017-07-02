@@ -1,0 +1,7 @@
+create table category (id bigint not null auto_increment, description varchar(255), meta_description varchar(255), meta_keywords varchar(255), meta_title varchar(255), name varchar(255), primary key (id))
+create table price (id bigint not null auto_increment, amount double precision, currency varchar(255), discount_rate double precision, tax_rate double precision, primary key (id))
+create table product (id bigint not null auto_increment, description varchar(255), item_code varchar(255), manufacturer varchar(255), name varchar(255), price_id bigint, primary key (id))
+create table product_categories (product_id bigint not null, categories_id bigint not null)
+alter table product add constraint FK2l5ugesxirs8wp4iqcmji7g8m foreign key (price_id) references price (id)
+alter table product_categories add constraint FK86pfomapgvxb87x9nnxuc0pdj foreign key (categories_id) references category (id)
+alter table product_categories add constraint FKppc5s0f38pgb35a32dlgyhorc foreign key (product_id) references product (id)

@@ -1,0 +1,30 @@
+*.class
+
+src/main/generated/
+generated/
+target/
+bin/
+build/
+.gradle/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Intellij
+/.idea/
+*.iml
+*.iws
+*.ipr
+.idea/*.xml
+
+# Eclipse
+.classpath
+.project
+.settings
+.springBeans
+.factorypath
+*.launch
+
+/.editorconfig

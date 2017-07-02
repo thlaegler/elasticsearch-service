@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>elasticsearch-service</artifactId>
+	<groupId>com.laegler.microservice.elasticsearch</groupId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<name>Elasticsearch Service</name>
+	<description>An elasticsearch example project</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.4.RELEASE</version>
+	</parent>
+
+	<properties>
+		<!-- Basics: encoding and Java version -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<compiler.source.version>1.8</compiler.source.version>
+		<compiler.target.version>1.8</compiler.target.version>
+		<java.version>1.8</java.version>
+
+		<!-- Dependency versions -->
+		<spring.version>4.3.8.RELEASE</spring.version>
+		<spingboot.version>1.5.3.RELEASE</spingboot.version>
+		<spring.autorestdocs.version>1.0.6</spring.autorestdocs.version>
+		<springfox.version>2.6.0</springfox.version>
+		<hibernate.verion>5.2.10.Final</hibernate.verion>
+		<swagger.version>1.5.13</swagger.version>
+		<lombok.version>1.16.16</lombok.version>
+		<restassured.version>3.0.3</restassured.version>
+		<cucumber.version>1.2.5</cucumber.version>
+		<gherkin.version>2.12.2</gherkin.version>
+		<elasticsearch.version>1.7.5</elasticsearch.version>
+
+		<!-- Plugin versions -->
+		<protobuf-maven-plugin.version>0.5.0</protobuf-maven-plugin.version>
+		<os-maven-plugin.version>1.4.1.Final</os-maven-plugin.version>
+		<docker-maven-plugin.version>0.4.13</docker-maven-plugin.version>
+		<dockerfile-maven-plugin.version>1.2.2</dockerfile-maven-plugin.version>
+		<fabric8-maven-plugin.version>3.3.5</fabric8-maven-plugin.version>
+		<swagger-maven-plugin.version>3.1.5</swagger-maven-plugin.version>
+
+		<!-- gRPC -->
+		<grpc.dir.generated>src/main/gen</grpc.dir.generated>
+
+		<!-- eCommerce platform -->
+		<it.server.default.port>8080</it.server.default.port>
+		<it.grpc.default.port>7070</it.grpc.default.port>
+
+		<!-- POM properties -->
+		<it.dir.generated>${project.build.directory}/generated</it.dir.generated>
+		<it.api.package>${project.groupId}</it.api.package>
+		<it.log.file.path>/tmp/${project.artifactId}.log</it.log.file.path>
+
+		<!-- Spring -->
+		<it.spring.config.port>8888</it.spring.config.port>
+		<it.spring.config.uri>http://config-daemon:${it.spring.config.port}</it.spring.config.uri>
+		<it.spring.jvm.args>-Dspring.profiles.active=local</it.spring.jvm.args>
+
+		<!-- Docker -->
+		<it.docker.registry></it.docker.registry>
+		<it.docker.prefix></it.docker.prefix>
+		<it.docker.from>java:8</it.docker.from>
+		<it.docker.version>${project.version}</it.docker.version>
+		<it.docker.maintainer>thlaegler</it.docker.maintainer>
+
+		<!-- Kubernetes -->
+		<it.kube.provider>fabric8</it.kube.provider>
+		<it.kube.namespace>microservice</it.kube.namespace>
+
+		<!-- Integration Testing -->
+		<it.skip.itest>true</it.skip.itest>
+
+		<!-- Fabric8 specific; this is neccessary to make a custom manifest folder 
+			working -->
+		<fabric8.kubernetesManifest>${it.dir.generated}/kube/kubernetes.yml</fabric8.kubernetesManifest>
+	</properties>
+
+	<dependencies>
+
+		<!-- Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-elasticsearch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.module</groupId>
+			<artifactId>reindex</artifactId>
+			<version>2.4.5</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.springframework.data</groupId> <artifactId>spring-data-elasticsearch</artifactId> 
+			<version>3.0.0.M1</version> </dependency> -->
+
+		<!-- Hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		<!-- Database Driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Utilities -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- SpringFox Swagger documentation -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${springfox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${springfox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-core</artifactId>
+			<version>1.5.13</version>
+		</dependency>
+
+		<!-- TESTING -->
+		<!-- Spring Test and Spring REST Docs -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- REST-Assured -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${restassured.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
+			<version>${restassured.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Cucumber und Gherkin -->
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-spring</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>gherkin</artifactId>
+			<version>${gherkin.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${it.dir.generated}</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+			<!-- Filter and copy resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/resources</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>Dockerfile</include>
+										<include>.maven-dockerignore</include>
+									</includes>
+									<targetPath>${project.build.directory}</targetPath>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Spring Boot plugin -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<jvmArguments>${it.spring.jvm.args}</jvmArguments>
+					<excludeDevtools>false</excludeDevtools>
+				</configuration>
+			</plugin>
+
+			<!-- ProtoBuf / gRPC plugin -->
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>${protobuf-maven-plugin.version}</version>
+				<configuration>
+					<outputDirectory>${grpc.dir.generated}</outputDirectory>
+					<clearOutputDirectory>false</clearOutputDirectory>
+					<protocArtifact>com.google.protobuf:protoc:3.2.0:exe:${os.detected.classifier}</protocArtifact>
+					<pluginId>grpc-java</pluginId>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+					</pluginArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>compile-custom</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Kubernetes plugin -->
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
+				<version>${fabric8-maven-plugin.version}</version>
+				<configuration>
+					<mode>kubernetes</mode>
+					<buildStrategy>docker</buildStrategy>
+					<namespace>${it.kube.namespace}</namespace>
+					<detail>true</detail>
+					<targetDir>${it.dir.generated}/kube</targetDir>
+					<resourceDir>${basedir}/src/main/resources/kube</resourceDir>
+					<resourceFileType>yaml</resourceFileType>
+					<pushRegistry>${it.docker.registry}</pushRegistry>
+					<images>
+						<image>
+							<name>${it.docker.prefix}${project.artifactId}:${it.docker.version}</name>
+							<alias>${project.artifactId}</alias>
+							<registry>${it.docker.registry}</registry>
+							<build>
+								<dockerFileDir>${project.build.directory}</dockerFileDir>
+								<dockerFile>Dockerfile</dockerFile>
+							</build>
+						</image>
+						<image>
+							<name>${it.docker.prefix}microservice-mysql:${it.docker.version}</name>
+							<alias>microservice-mysql</alias>
+							<registry>${it.docker.registry}</registry>
+							<build>
+								<dockerFileDir>${basedir}/src/main/resources</dockerFileDir>
+								<dockerFile>mysql.Dockerfile</dockerFile>
+							</build>
+						</image>
+						<image>
+							<name>${it.docker.prefix}microservice-es:${it.docker.version}</name>
+							<alias>microservice-es</alias>
+							<registry>${it.docker.registry}</registry>
+							<build>
+								<dockerFileDir>${basedir}/src/main/resources</dockerFileDir>
+								<dockerFile>elasticsearch.Dockerfile</dockerFile>
+							</build>
+						</image>
+					</images>
+					<enricher>
+						<excludes>
+							<exclude>spring-boot-health-check</exclude>
+						</excludes>
+					</enricher>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-kube-manifests</id>
+						<phase>package</phase>
+						<goals>
+							<goal>resource</goal>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>${swagger-maven-plugin.version}</version>
+				<configuration>
+					<apiSources>
+						<apiSource>
+							<springmvc>true</springmvc>
+							<locations>${it.api.package}</locations>
+							<schemes>http,https</schemes>
+							<host>localhost:8080</host>
+							<basePath>/api</basePath>
+							<outputFormats>json,yaml</outputFormats>
+							<jsonExampleValues>true</jsonExampleValues>
+							<swaggerDirectory>${it.dir.generated}/api</swaggerDirectory>
+							<info>
+								<title>${project.name} REST API</title>
+								<version>${project.version}</version>
+								<description>${project.description}</description>
+							</info>
+						</apiSource>
+					</apiSources>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-swagger</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Testing plugins -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/*ITest.java</exclude>
+					</excludes>
+					<skipTests>false</skipTests>
+					<testFailureIgnore>true</testFailureIgnore>
+					<reuseForks>false</reuseForks>
+					<forkCount>1</forkCount>
+					<!-- <parallel>classes</parallel> <threadCount>10</threadCount> -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*IT.java</include>
+						<include>**/*ITest.java</include>
+					</includes>
+					<skip>${it.skip.itest}</skip>
+					<skipTests>${it.skip.itest}</skipTests>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>itest-remote</id>
+			<properties>
+				<it.skip.itest>false</it.skip.itest>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+		<profile>
+			<id>itest-docker-compose</id>
+			<properties>
+				<it.skip.itest>false</it.skip.itest>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<id>docker-compose-up</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${basedir}/src/main/resources/docker-compose-up.sh</executable>
+								</configuration>
+							</execution>
+							<execution>
+								<id>docker-compose-down</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${basedir}/src/main/resources/docker-compose-down.sh</executable>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- <plugin> <groupId>com.spotify</groupId> <artifactId>docker-maven-plugin</artifactId> 
+						<version>1.0.0</version> </plugin> -->
+					<!-- <plugin> <groupId>io.fabric8</groupId> <artifactId>maven-docker-plugin</artifactId> 
+						<version>0.21.0</version> <executions> <execution> <id>prepare-it-database</id> 
+						<phase>pre-integration-test</phase> <goals> <goal>start</goal> </goals> <configuration> 
+						<images> <image> <external> <compose> <basedir>src/main/resources</basedir> 
+						<yamlFile>docker-compose.yml</yamlFile> </compose> </external> </image> </images> 
+						</configuration> </execution> <execution> <id>remove-it-database</id> <phase>post-integration-test</phase> 
+						<goals> <goal>stop</goal> </goals> </execution> </executions> </plugin> -->
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>itest-spring-boot</id>
+			<properties>
+				<it.skip.itest>false</it.skip.itest>
+				<skipTests>true</skipTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>spring-boot-run</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>spring-boot-stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

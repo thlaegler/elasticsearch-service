@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microservice-mysql
+  namespace: microservice
+  labels:
+    project: microservice-mysql
+    group: com.laegler.microservice
+    provider: thlaegler
+    version: 1.0.0-SNAPSHOT
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: microservice-mysql
+        image: mysql
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: api
+          containerPort: 8080
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
