@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.laegler.microservice.elasticsearch.model.Product;
-import com.laegler.microservice.elasticsearch.service.ProductSearchService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,14 +22,14 @@ public class ProductSearchIndexTest {
 
   private static final Logger LOG = LoggerFactory.getLogger(ProductSearchIndexTest.class);
 
-  @Autowired
-  private ProductSearchService service;
+  // @Autowired
+  // private ProductSearchService service;
 
   @Autowired
   private ElasticsearchTemplate esTemplate;
 
-  @Autowired
-  private ProductEsRepository esRepository;
+  // @Autowired
+  // private ProductSearchRepository esRepository;
 
   @Before
   public void before() {

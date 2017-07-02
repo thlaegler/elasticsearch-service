@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.laegler.microservice.elasticsearch.model.Product;
-import com.laegler.microservice.elasticsearch.service.ProductService;
 
 /**
  * @see ProductSearchIndexRestController
@@ -23,15 +22,9 @@ import com.laegler.microservice.elasticsearch.service.ProductService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
-public class ProductSearchRestSpringTest extends AbstractProductSpringTestLib {
+public class ProductIndexRestSpringTest extends AbstractProductSpringTestLib {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ProductSearchRestSpringTest.class);
-
-
-  private Product product;
-
-  @Autowired
-  private ProductService productService;
+  private static final Logger LOG = LoggerFactory.getLogger(ProductIndexRestSpringTest.class);
 
   @Autowired
   private ElasticsearchTemplate esTemplate;
@@ -47,28 +40,10 @@ public class ProductSearchRestSpringTest extends AbstractProductSpringTestLib {
   }
 
   @Test
-  public void searchGet_shouldFindIndexedProduct() {
-    productSearchGet("blue").then().body("[0].id", equalTo(productId));
-  }
-
-  @Test
   public void reindexPut_shouldIndexChangedProduct() {
     modifyProductInDatabase(productId, "yellow");
     productSearchGet("yellow").then().body("[0].id", equalTo(productId));
     modifyProductInDatabase(productId, "blue");
-  }
-
-  @Override
-  protected Product getProductFromDatabase(String productId) {
-    return productService.getProduct(Long.parseLong(productId));
-  }
-
-  @Override
-  protected void modifyProductInDatabase(String productId, String name) {
-    product = productService.getProduct(Long.parseLong(productId));
-    product.setName(name + " shirt");
-    product.setDescription(name);
-    productService.saveProduct(product);
   }
 
 }

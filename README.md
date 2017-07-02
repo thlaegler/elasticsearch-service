@@ -17,7 +17,9 @@ You need:
 Append /etc/hosts file:
 
 > `127.0.0.1	elasticsearch-service`
+
 > `127.0.0.1	microservice-mysql`
+
 > `127.0.0.1	microservice-es`
 
 

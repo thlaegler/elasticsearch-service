@@ -4,6 +4,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
 public abstract class AbstractTestLib {
+
   protected World world = new World();
 
   protected World initWorld(String basePath) {

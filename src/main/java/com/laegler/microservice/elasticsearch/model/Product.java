@@ -69,6 +69,7 @@ public class Product {
   @OneToOne
   private Price price;
 
+  @ApiModelProperty
   @MultiField(mainField = @Field(type = FieldType.Nested),
       otherFields = @InnerField(type = FieldType.Nested, suffix = "test"))
   @Column

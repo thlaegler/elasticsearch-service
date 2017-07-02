@@ -5,7 +5,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
-public class ProductEsService {
+public class AbstractEsService {
 
   protected QueryBuilder createQueryBuilder(String queryString) {
     return QueryBuilders.queryStringQuery(queryString);

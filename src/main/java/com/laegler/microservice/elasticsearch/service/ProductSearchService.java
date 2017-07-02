@@ -15,21 +15,21 @@ import org.springframework.data.elasticsearch.core.facet.FacetResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
-import com.laegler.microservice.elasticsearch.elasticsearch.ProductEsRequest;
+import com.laegler.microservice.elasticsearch.elasticsearch.ProductSearchRequest;
 import com.laegler.microservice.elasticsearch.model.Product;
 
 @Service
-public class ProductSearchService extends ProductEsService {
+public class ProductSearchService extends AbstractEsService {
 
   private static final Logger LOG = LoggerFactory.getLogger(ProductSearchService.class);
 
   @Autowired
   private ElasticsearchTemplate template;
 
-  public Page<Product> searchPaged(ProductEsRequest esRequest) {
-    LOG.info("Trying to search for products with search request: {}", esRequest.toString());
+  public Page<Product> searchPaged(ProductSearchRequest searchRequest) {
+    LOG.info("Trying to search for products with search request: {}", searchRequest.toString());
     Page<Product> it =
-        template.queryForPage(createSearchQuery(esRequest.getQueryString()), Product.class);
+        template.queryForPage(createSearchQuery(searchRequest.getQueryString()), Product.class);
 
     LOG.info("Searched for products and found {} in index", it.getTotalElements());
     return fixEmptyPage(it);
@@ -43,10 +43,10 @@ public class ProductSearchService extends ProductEsService {
     return fixEmptyPage(it);
   }
 
-  public List<Product> search(ProductEsRequest esRequest) {
-    LOG.info("Trying to search for products with search request: {}", esRequest.toString());
+  public List<Product> search(ProductSearchRequest searchRequest) {
+    LOG.info("Trying to search for products with search request: {}", searchRequest.toString());
     List<Product> it =
-        template.queryForList(createSearchQuery(esRequest.getQueryString()), Product.class);
+        template.queryForList(createSearchQuery(searchRequest.getQueryString()), Product.class);
 
     LOG.info("Searched for products and found {} in index", it.size());
     return it;
@@ -62,12 +62,13 @@ public class ProductSearchService extends ProductEsService {
   }
 
   /**
-   * See https://jira.spring.io/browse/DATAES-274 and
+   * Workaround for Spring-data bug, see https://jira.spring.io/browse/DATAES-274 and
    * https://github.com/spring-projects/spring-data-elasticsearch/pull/175
    * 
    * @param page
    * @return
    */
+  @SuppressWarnings("deprecation")
   private <T> Page<T> fixEmptyPage(Iterable<T> page) {
     AggregatedPageImpl<T> pageResult = (AggregatedPageImpl<T>) page;
     Aggregations aggregations = pageResult.getAggregations();

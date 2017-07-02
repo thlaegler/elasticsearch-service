@@ -37,22 +37,22 @@ services:
     - esdata:/usr/share/elasticsearch/data
     networks:
     - microservice
-  swagger-ui:
-    image: swaggerapi/swagger-ui:v3.0.17
-    container_name: swagger-ui
-    hostname: swagger-ui
-    ports:
-    - 8080:8080
-    networks:
-    - microservice
-  swagger-editor:
-    image: swaggerapi/swagger-editor:v3.0.13
-    container_name: swagger-editor
-    hostname: swagger-editor
-    ports:
-    - 8080:8080
-    networks:
-    - microservice
+#  swagger-ui:
+#    image: swaggerapi/swagger-ui:v3.0.17
+#    container_name: swagger-ui
+#    hostname: swagger-ui
+#    ports:
+#    - 8080:8080
+#    networks:
+#    - microservice
+#  swagger-editor:
+#    image: swaggerapi/swagger-editor:v3.0.13
+#    container_name: swagger-editor
+#    hostname: swagger-editor
+#    ports:
+#    - 8080:8080
+#    networks:
+#    - microservice
 volumes:
   esdata:
     driver: local

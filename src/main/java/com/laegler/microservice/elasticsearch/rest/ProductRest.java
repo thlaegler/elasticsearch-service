@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,9 +30,9 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = {"Product Service"})
 @RestController
 @RequestMapping(value = "/products")
-public class ProductRestController {
+public class ProductRest {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ProductRestController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ProductRest.class);
 
   @Autowired
   private ProductService service;
@@ -53,7 +54,7 @@ public class ProductRestController {
   @GetMapping(value = "/{productId:.+}", produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<Product> productGet(
       @PathVariable(name = "productId", required = true) @ApiParam(name = "productId",
-          example = "The product I want", required = true) final long productId) {
+          example = "1", required = true) final long productId) {
     LOG.debug("productGet() called");
 
     return ResponseEntity.ok(service.getProduct(productId));
@@ -62,10 +63,9 @@ public class ProductRestController {
   @ApiOperation(value = "Search with query string", response = Product.class)
   @ApiResponses(value = {@ApiResponse(code = 200, message = "Ok"),
       @ApiResponse(code = 500, message = "Internal server error")})
-  @PostMapping(value = "/", produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<Product> productPost(
-      @PathVariable(name = "product", required = true) @ApiParam(name = "product",
-          example = "The product I want", required = true) final Product product) {
+  @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<Product> productPost(@RequestBody(required = true) @ApiParam(
+      name = "product", required = true) final Product product) {
     LOG.debug("productPost() called");
 
     Product productResult = service.saveProduct(product);
@@ -78,9 +78,8 @@ public class ProductRestController {
   @ApiResponses(value = {@ApiResponse(code = 200, message = "Ok"),
       @ApiResponse(code = 500, message = "Internal server error")})
   @PutMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<Product> productPut(
-      @PathVariable(name = "product", required = true) @ApiParam(name = "product",
-          example = "The product I want", required = true) final Product product) {
+  public ResponseEntity<Product> productPut(@RequestBody(required = true) @ApiParam(
+      name = "product", required = true) final Product product) {
     LOG.debug("productPut() called");
 
     return ResponseEntity.ok(service.saveProduct(product));
@@ -92,7 +91,7 @@ public class ProductRestController {
   @DeleteMapping(value = "/{productId:.+}", produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<Product> productDelete(
       @PathVariable(name = "productId", required = true) @ApiParam(name = "productId",
-          example = "The product I want", required = true) final long productId) {
+          example = "1", required = true) final long productId) {
     LOG.debug("productGet() called");
 
     service.deleteProduct(productId);
