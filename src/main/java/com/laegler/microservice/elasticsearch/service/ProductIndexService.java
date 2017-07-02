@@ -18,18 +18,14 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
-import com.laegler.microservice.elasticsearch.elasticsearch.ElasticsearchProperties;
-import com.laegler.microservice.elasticsearch.elasticsearch.ProductEsRepository;
 import com.laegler.microservice.elasticsearch.elasticsearch.ProductIndexProperties;
+import com.laegler.microservice.elasticsearch.elasticsearch.ProductSearchRepository;
 import com.laegler.microservice.elasticsearch.model.Product;
 
 @Service
-public class ProductIndexService {
+public class ProductIndexService extends AbstractEsService {
 
   private static final Logger LOG = LoggerFactory.getLogger(ProductIndexService.class);
-
-  @Autowired
-  private ElasticsearchProperties esProperties;
 
   @Autowired
   private ProductIndexProperties props;
@@ -38,19 +34,19 @@ public class ProductIndexService {
   private Client esClient;
 
   @Autowired
-  private ElasticsearchTemplate template;
+  private ElasticsearchTemplate esTemplate;
 
   @Autowired
-  private ProductEsRepository esRepository;
+  private ProductSearchRepository esRepository;
 
   @Autowired
   private ProductService productService;
 
-  public String index(boolean dropOldIndex) {
+  public String doIndexing(boolean dropOldIndex) {
     LOG.info("Trying to index products. Will drop old index: {} ...", dropOldIndex);
 
-    if (dropOldIndex == true && template.indexExists(props.getIndexName())) {
-      template.deleteIndex(props.getIndexName());
+    if (dropOldIndex == true && esTemplate.indexExists(props.getIndexName())) {
+      esTemplate.deleteIndex(props.getIndexName());
     }
 
     // String randomId = UUID.randomUUID().toString();
@@ -68,36 +64,35 @@ public class ProductIndexService {
       indexQueries.add(queryProductIndex(product));
     }));
 
-    template.bulkIndex(indexQueries);
+    esTemplate.bulkIndex(indexQueries);
 
-    // refreshIndex();
+    refreshIndex();
 
-    long itemsInIndex = template.count(queryProductsAll(), Product.class);
+    long itemsInIndex = esTemplate.count(queryProductsAll(), Product.class);
     LOG.info("Indexing done. Indexed {} products.", itemsInIndex);
 
     return "" + itemsInIndex;
   }
 
   public String reindex() {
-    return index(true);
+    return doIndexing(true);
   }
 
   public void refreshIndex() {
     LOG.debug("Trying to refresh Product Search Index ...");
 
-    template.refresh(Product.class);
+    esTemplate.refresh(Product.class);
 
     // RefreshResponse response =
     // esClient.admin().indices().prepareRefresh(props.getIndexName()).execute().actionGet();
 
-    // LOG.debug("Product Search Index Refreshing done. Failed Shards: {}.",
-    // response.getFailedShards());
+    LOG.debug("Product Search Index Refreshing done");
   }
 
 
   public void addAlias(String alias) throws InterruptedException, ExecutionException {
     AliasBuilder aliasBuilder = new AliasBuilder();
-    template.addAlias(
+    esTemplate.addAlias(
         aliasBuilder.withAliasName("the_alias").withIndexName(props.getIndexName()).build());
 
     // IndicesAliasesRequest request = new IndicesAliasesRequest();
@@ -109,22 +104,18 @@ public class ProductIndexService {
 
 
   public long countIndexedProducts() {
-    // CountResponse response = esClient.prepareCount(props.getIndexName())
-    // // .setQuery(QueryBuilders.termQuery("_type", "type1"))
-    // .execute().actionGet();
-    // return response.getCount();
     return esRepository.count();
   }
 
   private void replaceIndex(String indexName) {
-    if (template.indexExists(indexName)) {
-      template.deleteIndex(indexName);
+    if (esTemplate.indexExists(indexName)) {
+      esTemplate.deleteIndex(indexName);
     }
   }
 
   private void replaceIndexByAlias(String alias, Product productSearch) {
-    if (template.indexExists(alias)) {
-      template.deleteIndex(alias);
+    if (esTemplate.indexExists(alias)) {
+      esTemplate.deleteIndex(alias);
     }
   }
 
@@ -151,36 +142,6 @@ public class ProductIndexService {
     LOG.info("  Aliases: " + response.getAliases().toString());
     LOG.info("  Headers: " + response.getHeaders().toString());
     return response;
-    // eRefresh("index1").execute().actionGet();
-    // SearchResponse response = searchRequestBuilder.execute().actionGet();
   }
-
-  // private Product createProductIndex(Product product) {
-  // if (!template.createIndex(Product.class)) {
-  // throw new IllegalStateException("Failed to create index.");
-  // }
-  //
-  // return new Product(product);
-
-  // productService.getAllProducts().forEach((p -> {
-  //
-  // }));
-  // Product productIndex = new Product(product);
-  // // new IndexQueryBuilder().withIndexName(indexName+)
-  // // .withObject(productSearch).build()
-  //
-  // // Enrich Product with more data
-  // List<String> staticKeywords = Arrays.asList("Quality", "Designer", "Fashion");
-  // if (productIndex.getProducts() != null) {
-  // productIndex.getProducts().forEach((p) -> {
-  // p.setKeywords("");
-  // staticKeywords.forEach((k) -> {
-  // p.setKeywords(p.getKeywords().concat(k + ", "));
-  // });
-  // });
-  // }
-  //
-  // return productIndex;
-  // }
 
 }

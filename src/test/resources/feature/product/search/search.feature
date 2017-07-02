@@ -9,7 +9,7 @@ Feature: Search for products in elasticsearch index
     Then the result list should contain a product with item code 231
 
   Scenario: As a user I want to get a list of products as search result.
-  	Given is system staging
+  	Given is a system staging
     Given is a store batteries.example
     Given is a user with name dummy and password p4ssw0rd
     When the user queries for "green"

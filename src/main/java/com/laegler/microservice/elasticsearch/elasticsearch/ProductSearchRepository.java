@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.laegler.microservice.elasticsearch.model.Product;
 
 @Repository
-public interface ProductEsRepository
+public interface ProductSearchRepository
     extends ElasticsearchRepository<Product, Long>, PagingAndSortingRepository<Product, Long> {
 
   // Page<Article> findByAuthorsName(String name, Pageable pageable);

@@ -7,19 +7,15 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductAggregationService extends ProductEsService {
+public class ProductAggregationService extends AbstractEsService {
 
   private static final Logger LOG = LoggerFactory.getLogger(ProductAggregationService.class);
 
   @Autowired
   private Client esClient;
-
-  @Autowired
-  private ElasticsearchTemplate template;
 
   public Aggregations getAggregations() {
     SearchResponse response = esClient.prepareSearch()

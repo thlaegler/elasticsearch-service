@@ -56,4 +56,11 @@ public class Message {
     this.description = description;
   }
 
+  public enum MessageSeverity {
+    INFO, //
+    WARN, //
+    ERROR, //
+    FATAL;
+  }
+
 }

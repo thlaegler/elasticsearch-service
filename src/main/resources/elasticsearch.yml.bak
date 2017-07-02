@@ -1,0 +1,80 @@
+name: ${HOSTNAME}
+
+# The cluster should be named with the name of the AD domain
+cluster:
+  name: bldrprod-0.14.0
+  routing:
+    allocation:
+      # As small as possible, very large performance hits during recovery
+      concurrent_recoveries: 1
+
+# Force all memory to be prealloced and locked, forcing JVM to never swap
+bootstrap:
+  mlockall: true
+
+gateway:
+  type: local
+  # We will only start the cluster with n-1 nodes available. We wait 5 mins for all N to be available
+  # If the number of nodes in the cluster changes, we MUST update this value
+  recover_after_nodes: 3
+  recover_after_time: 5m
+  expected_nodes: 4
+
+discovery:
+  zen:
+    ping:
+      unicast:
+        hosts: ['dm-essearchp101.bldrprod.local:9300', 'dm-essearchp102.bldrprod.local:9300', 'dm-essearchp103.bldrprod.local:9300', 'dm-essearchp104.bldrprod.local:9300']
+
+index:
+  # This combined with concurrent_recoveries  throttles recovery to have the least impact on performance
+  # This does mean that recovery may be quite slow, but that is the sacrifice we're making to avoid bad perf
+  shard:
+    recovery: 
+      concurrent_streams: 1
+
+  # All of our snapshotting occurs via esindexer
+  gateway: 
+    snapshot_interval : -1
+
+  # We have so many shards that we need to keep translogs relatively small for recovery
+  # This does result in more frequent flushes. The default is 5000 and this is per index
+  translog:
+    flush_threshold: 1000
+
+  # Defaults to 1024, but that is to small for very large portfolio pages
+  query:
+    bool:
+      max_clause_count: 10240
+
+  analysis :
+    analyzer : 
+      # This analyzer mimics verity behavior
+      verity_tokenizer :
+        type: pattern
+        lowercase: true
+        pattern: '(?:(?!\w).)+'
+        stopwords: _none_ 
+        flags: DOTALL
+      # Analyzer is used for sorting multi-term fields
+      lowercase_keyword :
+        type : custom
+        filter : [lowercase]
+        tokenizer : keyword
+      # IDOL TextMatch, PipeDelimited
+      pipe_tokenizer :
+        type: pattern
+        lowercase: true
+        pattern: '\|'
+        stopwords: _none_ 
+        flags: DOTALL
+      # IDOL FullText
+      fulltext_tokenizer :
+        type : custom
+        filter : [standard, lowercase, stop, porterStem]
+        tokenizer : standard
+
+path:
+  logs: /opt/wsod/var/log/elasticsearch/
+  work: /opt/wsod/var/work/elasticsearch/
+  data: /opt/wsod/var/data/elasticsearch/

@@ -74,7 +74,8 @@
 		<it.kube.namespace>microservice</it.kube.namespace>
 
 		<!-- Integration Testing -->
-		<it.skip.itest>true</it.skip.itest>
+		<it.skip.itests>true</it.skip.itests>
+		<it.skip.tests>false</it.skip.tests>
 
 		<!-- Fabric8 specific; this is neccessary to make a custom manifest folder 
 			working -->
@@ -399,7 +400,7 @@
 					<excludes>
 						<exclude>**/*ITest.java</exclude>
 					</excludes>
-					<skipTests>false</skipTests>
+					<skipTests>${it.skip.tests}</skipTests>
 					<testFailureIgnore>true</testFailureIgnore>
 					<reuseForks>false</reuseForks>
 					<forkCount>1</forkCount>
@@ -414,8 +415,8 @@
 						<include>**/*IT.java</include>
 						<include>**/*ITest.java</include>
 					</includes>
-					<skip>${it.skip.itest}</skip>
-					<skipTests>${it.skip.itest}</skipTests>
+					<skip>${it.skip.itests}</skip>
+					<skipTests>${it.skip.itests}</skipTests>
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 				<executions>
@@ -434,15 +435,15 @@
 		<profile>
 			<id>itest-remote</id>
 			<properties>
-				<it.skip.itest>false</it.skip.itest>
-				<skipTests>true</skipTests>
+				<it.skip.itests>false</it.skip.itests>
+				<it.skip.tests>true</it.skip.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>itest-docker-compose</id>
 			<properties>
-				<it.skip.itest>false</it.skip.itest>
-				<skipTests>true</skipTests>
+				<it.skip.itests>false</it.skip.itests>
+				<it.skip.tests>true</it.skip.tests>
 			</properties>
 			<build>
 				<plugins>
@@ -473,15 +474,6 @@
 							</execution>
 						</executions>
 					</plugin>
-					<!-- <plugin> <groupId>com.spotify</groupId> <artifactId>docker-maven-plugin</artifactId> 
-						<version>1.0.0</version> </plugin> -->
-					<!-- <plugin> <groupId>io.fabric8</groupId> <artifactId>maven-docker-plugin</artifactId> 
-						<version>0.21.0</version> <executions> <execution> <id>prepare-it-database</id> 
-						<phase>pre-integration-test</phase> <goals> <goal>start</goal> </goals> <configuration> 
-						<images> <image> <external> <compose> <basedir>src/main/resources</basedir> 
-						<yamlFile>docker-compose.yml</yamlFile> </compose> </external> </image> </images> 
-						</configuration> </execution> <execution> <id>remove-it-database</id> <phase>post-integration-test</phase> 
-						<goals> <goal>stop</goal> </goals> </execution> </executions> </plugin> -->
 				</plugins>
 			</build>
 		</profile>
@@ -489,8 +481,8 @@
 		<profile>
 			<id>itest-spring-boot</id>
 			<properties>
-				<it.skip.itest>false</it.skip.itest>
-				<skipTests>true</skipTests>
+				<it.skip.itests>false</it.skip.itests>
+				<it.skip.tests>true</it.skip.tests>
 			</properties>
 			<build>
 				<plugins>
@@ -502,7 +494,7 @@
 								<id>spring-boot-run</id>
 								<phase>pre-integration-test</phase>
 								<goals>
-									<goal>run</goal>
+									<goal>start</goal>
 								</goals>
 							</execution>
 							<execution>

@@ -49,7 +49,7 @@ public class ElasticsearchIndexProvider {
     esTemplate.createIndex(Product.class);
     esTemplate.putMapping(Product.class);
     // esTemplate.refresh(Product.class);
-    String productIndexId = productIndexService.index(true);
+    String productIndexId = productIndexService.doIndexing(true);
 
     LOG.debug("Initialization of Product Search Index done. Index ID: {}.", productIndexId);
 
